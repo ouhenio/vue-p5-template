@@ -1,12 +1,14 @@
 <script setup>
 import p5 from "p5";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 
 const events = ["preload", "setup", "draw"];
+const emit = defineEmits(["preload", "setup", "draw"]);
+const el = ref(null);
 
 onMounted(() => {
   new p5((sketch) => {
-    this.$emit("sketch", sketch);
+    emit("sketch", sketch);
 
     for (const p5EventName of events) {
       const vueEventName = p5EventName.toLowerCase();
@@ -15,13 +17,13 @@ onMounted(() => {
         if (savedCallback) {
           savedCallback(sketch, ...args);
         }
-        this.$emit(vueEventName, sketch, ...args);
+        emit(vueEventName, sketch, ...args);
       };
     }
-  }, this.$el);
+  }, el);
 });
 </script>
 
 <template>
-  <div></div>
+  <div ref="el"></div>
 </template>
